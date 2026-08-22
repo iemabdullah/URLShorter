@@ -103,7 +103,7 @@ const config = {
   }
   async function is_url_safe(url){
   
-    let raw = JSON.stringify({"client":{"clientId":"Url-Shorten-Worker","clientVersion":"1.0.7"},"threatInfo":{"threatTypes":["MALWARE","SOCIAL_ENGINEERING","POTENTIALLY_HARMFUL_APPLICATION","UNWANTED_SOFTWARE"],"platformTypes":["ANY_PLATFORM"],"threatEntryTypes":["URL"],"threatEntries":[{"url":url}]}});
+    let raw = JSON.stringify({"client":{"clientId":"URLShorter","clientVersion":"1.0.7"},"threatInfo":{"threatTypes":["MALWARE","SOCIAL_ENGINEERING","POTENTIALLY_HARMFUL_APPLICATION","UNWANTED_SOFTWARE"],"platformTypes":["ANY_PLATFORM"],"threatEntryTypes":["URL"],"threatEntries":[{"url":url}]}});
   
     let requestOptions = {
       method: 'POST',
@@ -153,7 +153,7 @@ const config = {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'User-Agent': 'Url-Shorten-Worker/1.0.7',
+            'User-Agent': 'URLShorter/1.0.7',
           },
           body: JSON.stringify({ token, keepToken }),
           signal: controller.signal,
@@ -338,15 +338,23 @@ const config = {
   
     console.log(path)
     
-    // Serve homepage
+    // Serve homepage locally so the Worker does not depend on an external theme repository.
     if (!path) {
-      const html = await fetch("https://iemabdullah.github.io/URLShorter/" + config.theme + "/index.html")
-      
-      return new Response(await html.text(), {
-        headers: {
-          "content-type": "text/html;charset=UTF-8",
-        },
-      })
+      const captchaEnabled = isCaptchaRequired('create');
+      const sourceUrl = "https://github.com/iemabdullah/URLShorter";
+      const captchaScript = captchaEnabled ? '<script src="https://captcha.gurl.eu.org/cap.min.js"></script>' : '';
+      const captchaMarkup = captchaEnabled ? `<div class="captcha-wrap"><cap-widget id="cap" data-cap-api-endpoint="${config.captcha.api_endpoint}/"></cap-widget></div>` : '';
+      const html = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shorten your URLs</title>${captchaScript}
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eef6ff,#f7f1ff);display:flex;justify-content:center;align-items:center;color:#182033}.card{width:min(672px,calc(100% - 32px));background:#fff;border-radius:0 0 18px 18px;box-shadow:0 16px 35px rgba(30,35,60,.15);overflow:hidden}.hero{text-align:center;padding:8px 28px 42px;border-bottom:1px solid #e4e7ed}h1{font-size:36px;line-height:1.15;margin:0 0 8px;font-weight:750}.sub{margin:0;color:#858991;font-size:17px}.form{padding:32px}label{display:block;text-transform:uppercase;font-size:12px;font-weight:700;letter-spacing:.08em;color:#858991;margin-bottom:13px}input[type=url]{width:100%;height:48px;border:2px solid #cbd0da;border-radius:8px;background:#f8f8fa;padding:0 16px;font-size:16px;outline:none}input[type=url]:focus{border-color:#1677ff;background:#fff}button{width:100%;height:48px;border:0;border-radius:8px;background:#087cf0;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:13px}button:hover{background:#006de0}button:disabled{opacity:.65;cursor:not-allowed}.captcha-wrap{margin-top:18px;display:flex;justify-content:center}.result{display:none;margin-top:18px;padding:14px;border-radius:8px;background:#f2f7ff;word-break:break-all}.result a{color:#087cf0}.error{display:none;margin-top:14px;color:#c62828;font-size:14px;text-align:center}.footer{border-top:1px solid #e4e7ed;text-align:center;padding:32px}.footer a{color:#087cf0;text-decoration:none;font-size:14px}.footer a:hover{text-decoration:underline}
+</style></head><body><main class="card"><section class="hero"><h1>Shorten your URLs</h1><p class="sub">Fast, Secure, and Reliable URL Shortening Service</p></section><section class="form"><label for="url">Enter URL to shorten</label><input id="url" type="url" placeholder="https://example.com/" autocomplete="url">${captchaMarkup}<button id="shorten">Shorten</button><div id="error" class="error"></div><div id="result" class="result"></div></section><footer class="footer"><a href="${sourceUrl}" target="_blank" rel="noopener noreferrer">View Source Code →</a></footer></main>
+<script>
+const input=document.getElementById('url'),button=document.getElementById('shorten'),errorBox=document.getElementById('error'),resultBox=document.getElementById('result');let captchaToken=null;
+${captchaEnabled ? "const cap=document.getElementById('cap');cap.addEventListener('solve',e=>{captchaToken=e.detail.token;});" : ''}
+button.addEventListener('click',async()=>{errorBox.style.display='none';resultBox.style.display='none';const url=input.value.trim();if(!url){errorBox.textContent='Please enter a URL.';errorBox.style.display='block';return;}button.disabled=true;button.textContent='Shortening...';try{const payload={url};${captchaEnabled ? "if(!captchaToken)throw new Error('Please complete the CAPTCHA first.');payload.captcha_token=captchaToken;" : ''}const response=await fetch('/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok||data.status!==200)throw new Error(data.error||'Unable to shorten this URL.');const shortUrl=new URL(data.short_url,location.origin).href;resultBox.innerHTML='<strong>Short URL:</strong> <a href="'+shortUrl+'" target="_blank" rel="noopener">'+shortUrl+'</a>';resultBox.style.display='block';}catch(err){errorBox.textContent=err.message||'Something went wrong.';errorBox.style.display='block';}finally{button.disabled=false;button.textContent='Shorten';}});input.addEventListener('keydown',e=>{if(e.key==='Enter')button.click();});
+</script></body></html>`;
+      return new Response(html, { headers: { "content-type": "text/html;charset=UTF-8" } });
     }
   
     // Retrieve the target URL
@@ -448,9 +456,7 @@ const config = {
       // Safe browsing check
       if (config.safe_browsing_api_key) {
         if (!(await is_url_safe(location))) {
-          let warning_page = await fetch("https://iemabdullah.github.io/URLShorter/safe-browsing.html")
-          warning_page = await warning_page.text()
-          warning_page = warning_page.replace(/{Replace}/gm, location)
+          const warning_page = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Unsafe URL</title><style>body{font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f7f8fb}.box{max-width:560px;background:#fff;padding:32px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.08)}h1{color:#c62828}a{color:#087cf0;word-break:break-all}</style></head><body><div class="box"><h1>Unsafe URL</h1><p>This destination was blocked by the URL safety check.</p><a href="${location}">${location}</a></div></body></html>`
           return new Response(warning_page, {
             headers: {
               "content-type": "text/html;charset=UTF-8",
@@ -461,9 +467,7 @@ const config = {
   
       // Redirect to target URL
       if (config.no_ref == "on") {
-        let no_ref = await fetch("https://iemabdullah.github.io/URLShorter/no-ref.html")
-        no_ref = await no_ref.text()
-        no_ref = no_ref.replace(/{Replace}/gm, location)
+        const no_ref = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Redirecting...</title></head><body><p>Redirecting...</p><script>location.replace(${JSON.stringify(location)});</script></body></html>`
         return new Response(no_ref, {
           headers: {
             "content-type": "text/html;charset=UTF-8",
