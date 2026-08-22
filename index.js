@@ -345,15 +345,82 @@ const config = {
       const captchaScript = captchaEnabled ? '<script src="https://captcha.gurl.eu.org/cap.min.js"></script>' : '';
       const captchaMarkup = captchaEnabled ? `<div class="captcha-wrap"><cap-widget id="cap" data-cap-api-endpoint="${config.captcha.api_endpoint}/"></cap-widget></div>` : '';
       const html = `<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shorten your URLs</title>${captchaScript}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#6d5dfc">
+<title>URLShorter — Fast & Secure</title>${captchaScript}
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(135deg,#eef6ff,#f7f1ff);display:flex;justify-content:center;align-items:center;color:#182033}.card{width:min(672px,calc(100% - 32px));background:#fff;border-radius:0 0 18px 18px;box-shadow:0 16px 35px rgba(30,35,60,.15);overflow:hidden}.hero{text-align:center;padding:8px 28px 42px;border-bottom:1px solid #e4e7ed}h1{font-size:36px;line-height:1.15;margin:0 0 8px;font-weight:750}.sub{margin:0;color:#858991;font-size:17px}.form{padding:32px}label{display:block;text-transform:uppercase;font-size:12px;font-weight:700;letter-spacing:.08em;color:#858991;margin-bottom:13px}input[type=url]{width:100%;height:48px;border:2px solid #cbd0da;border-radius:8px;background:#f8f8fa;padding:0 16px;font-size:16px;outline:none}input[type=url]:focus{border-color:#1677ff;background:#fff}button{width:100%;height:48px;border:0;border-radius:8px;background:#087cf0;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:13px}button:hover{background:#006de0}button:disabled{opacity:.65;cursor:not-allowed}.captcha-wrap{margin-top:18px;display:flex;justify-content:center}.result{display:none;margin-top:18px;padding:14px;border-radius:8px;background:#f2f7ff;word-break:break-all}.result a{color:#087cf0}.error{display:none;margin-top:14px;color:#c62828;font-size:14px;text-align:center}.footer{border-top:1px solid #e4e7ed;text-align:center;padding:32px}.footer a{color:#087cf0;text-decoration:none;font-size:14px}.footer a:hover{text-decoration:underline}
-</style></head><body><main class="card"><section class="hero"><h1>Shorten your URLs</h1><p class="sub">Fast, Secure, and Reliable URL Shortening Service</p></section><section class="form"><label for="url">Enter URL to shorten</label><input id="url" type="url" placeholder="https://example.com/" autocomplete="url">${captchaMarkup}<button id="shorten">Shorten</button><div id="error" class="error"></div><div id="result" class="result"></div></section><footer class="footer"><a href="${sourceUrl}" target="_blank" rel="noopener noreferrer">View Source Code →</a></footer></main>
+*{box-sizing:border-box}
+:root{--p:#6d5dfc;--p2:#8b5cf6;--pink:#db2777;--ink:#111827;--muted:#73798a}
+html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--ink);background:radial-gradient(circle at 12% 20%,rgba(34,211,238,.28),transparent 28%),radial-gradient(circle at 88% 15%,rgba(139,92,246,.30),transparent 30%),radial-gradient(circle at 75% 85%,rgba(236,72,153,.20),transparent 32%),linear-gradient(135deg,#eef4ff,#faf7ff 48%,#eefcff)}
+body:before,body:after{content:"";position:fixed;border-radius:50%;pointer-events:none;filter:blur(2px)}
+body:before{width:280px;height:280px;left:-100px;bottom:-100px;background:rgba(109,93,252,.16);animation:float1 8s ease-in-out infinite}
+body:after{width:220px;height:220px;right:-70px;bottom:15%;background:rgba(34,211,238,.14);animation:float2 10s ease-in-out infinite}
+.scene{width:min(720px,calc(100% - 28px));perspective:1200px}
+.card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.8);border-radius:28px;background:rgba(255,255,255,.76);box-shadow:0 35px 80px rgba(43,36,91,.18),0 12px 30px rgba(72,82,120,.12),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);animation:cardIn .9s cubic-bezier(.2,.8,.2,1)}
+.card:before{content:"";position:absolute;inset:-50%;background:conic-gradient(from 90deg,transparent,#8b5cf622,transparent,#22d3ee22,transparent);animation:spin 12s linear infinite;pointer-events:none}
+.content{position:relative;z-index:2}
+.hero{text-align:center;padding:46px 28px 29px}
+.logo{width:62px;height:62px;margin:0 auto 17px;border-radius:19px;display:grid;place-items:center;color:#fff;font-size:29px;font-weight:900;background:linear-gradient(135deg,var(--p),var(--p2) 55%,var(--pink));box-shadow:0 14px 28px rgba(109,93,252,.32),inset 0 1px 0 rgba(255,255,255,.45);animation:logoFloat 3.5s ease-in-out infinite}
+h1{margin:0;font-size:clamp(31px,6vw,46px);line-height:1.08;letter-spacing:-1.7px;font-weight:850}
+.gradient{background:linear-gradient(90deg,#4f46e5,#7c3aed,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin:12px 0 0;color:var(--muted);font-size:16px}
+.badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px}
+.badge{padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(130,125,170,.14);color:#656b7c;font-size:11px;font-weight:700;box-shadow:0 6px 15px rgba(45,42,80,.06)}
+.form{padding:30px 34px 34px;border-top:1px solid rgba(125,130,160,.14)}
+label{display:block;text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;color:#7b8090;margin-bottom:11px}
+input[type=url]{width:100%;height:58px;border:1.5px solid #d7d9e4;border-radius:15px;background:rgba(248,249,253,.88);padding:0 17px;font-size:16px;color:#202538;outline:none;box-shadow:inset 0 2px 7px rgba(40,43,70,.035),0 5px 18px rgba(45,42,80,.04);transition:.25s ease}
+input[type=url]:focus{border-color:#8b7cf7;background:#fff;box-shadow:0 0 0 4px rgba(109,93,252,.11),0 9px 24px rgba(69,57,150,.10);transform:translateY(-1px)}
+button{position:relative;width:100%;height:56px;border:0;border-radius:15px;margin-top:14px;background:linear-gradient(110deg,#5b5cf0,#7c3aed 48%,#db2777);background-size:200% 100%;color:#fff;font-size:16px;font-weight:800;cursor:pointer;overflow:hidden;box-shadow:0 14px 28px rgba(99,75,220,.27),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s,box-shadow .2s,background-position .5s}
+button:before{content:"";position:absolute;top:-40%;left:-20%;width:35%;height:180%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);transform:rotate(18deg);animation:shine 2.8s infinite}
+button:hover{transform:translateY(-3px);box-shadow:0 19px 34px rgba(99,75,220,.34);background-position:100% 0}
+button:active{transform:translateY(-1px)}
+button:disabled{opacity:.7;cursor:not-allowed;transform:none}
+.captcha-wrap{margin-top:18px;display:flex;justify-content:center}
+.result,.error{display:none;margin-top:16px;border-radius:15px;animation:pop .35s ease}
+.result{padding:16px;background:linear-gradient(135deg,rgba(238,242,255,.95),rgba(236,253,250,.92));border:1px solid rgba(109,93,252,.12);word-break:break-all;box-shadow:0 10px 24px rgba(40,45,90,.06)}
+.result strong{display:block;margin-bottom:5px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#72778a}
+.result a{color:#5b4ee8;font-weight:750;text-decoration:none}
+.error{padding:13px 15px;background:#fff1f2;color:#be123c;font-size:14px;text-align:center;border:1px solid #fecdd3}
+.footer{position:relative;z-index:2;border-top:1px solid rgba(125,130,160,.14);text-align:center;padding:23px}
+.footer a{color:#6254e8;text-decoration:none;font-size:13px;font-weight:700}.footer a:hover{color:#db2777}
+.footer small{display:block;margin-top:7px;color:#9a9eaa;font-size:10px}
+@keyframes cardIn{from{opacity:0;transform:rotateX(8deg) translateY(35px) scale(.97)}to{opacity:1;transform:rotateX(0) translateY(0) scale(1)}}
+@keyframes logoFloat{0%,100%{transform:translateZ(35px) translateY(0) rotate(-2deg)}50%{transform:translateZ(35px) translateY(-8px) rotate(2deg)}}
+@keyframes shine{0%{left:-45%}55%,100%{left:125%}}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes pop{from{opacity:0;transform:translateY(7px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes float1{50%{transform:translate(35px,-28px) scale(1.08)}}@keyframes float2{50%{transform:translate(-25px,-35px) scale(.9)}}
+@media(max-width:560px){.hero{padding:35px 20px 25px}.form{padding:25px 20px 26px}.card{border-radius:23px}.logo{width:55px;height:55px;border-radius:16px}h1{letter-spacing:-1.2px}.sub{font-size:14px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="scene"><main class="card"><div class="content">
+<section class="hero">
+<div class="logo">↗</div>
+<h1><span class="gradient">Shorten</span> your URLs</h1>
+<p class="sub">Fast, secure & beautifully simple URL shortening</p>
+<div class="badges"><span class="badge">⚡ Fast</span><span class="badge">🔒 Secure</span><span class="badge">✨ Reliable</span></div>
+</section>
+<section class="form">
+<label for="url">Enter URL to shorten</label>
+<input id="url" type="url" placeholder="https://example.com/" autocomplete="url">
+${captchaMarkup}
+<button id="shorten">Shorten URL</button>
+<div id="error" class="error"></div><div id="result" class="result"></div>
+</section>
+<footer class="footer"><a href="${sourceUrl}" target="_blank" rel="noopener noreferrer">View Source Code&nbsp; →</a><small>Powered by URLShorter</small></footer>
+</div></main></div>
 <script>
 const input=document.getElementById('url'),button=document.getElementById('shorten'),errorBox=document.getElementById('error'),resultBox=document.getElementById('result');let captchaToken=null;
 ${captchaEnabled ? "const cap=document.getElementById('cap');cap.addEventListener('solve',e=>{captchaToken=e.detail.token;});" : ''}
-button.addEventListener('click',async()=>{errorBox.style.display='none';resultBox.style.display='none';const url=input.value.trim();if(!url){errorBox.textContent='Please enter a URL.';errorBox.style.display='block';return;}button.disabled=true;button.textContent='Shortening...';try{const payload={url};${captchaEnabled ? "if(!captchaToken)throw new Error('Please complete the CAPTCHA first.');payload.captcha_token=captchaToken;" : ''}const response=await fetch('/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok||data.status!==200)throw new Error(data.error||'Unable to shorten this URL.');const shortUrl=new URL(data.short_url,location.origin).href;resultBox.innerHTML='<strong>Short URL:</strong> <a href="'+shortUrl+'" target="_blank" rel="noopener">'+shortUrl+'</a>';resultBox.style.display='block';}catch(err){errorBox.textContent=err.message||'Something went wrong.';errorBox.style.display='block';}finally{button.disabled=false;button.textContent='Shorten';}});input.addEventListener('keydown',e=>{if(e.key==='Enter')button.click();});
-</script></body></html>`;
+button.addEventListener('click',async()=>{errorBox.style.display='none';resultBox.style.display='none';const url=input.value.trim();if(!url){errorBox.textContent='Please enter a URL.';errorBox.style.display='block';return;}button.disabled=true;button.textContent='Creating your short link…';try{const payload={url};${captchaEnabled ? "if(!captchaToken)throw new Error('Please complete the CAPTCHA first.');payload.captcha_token=captchaToken;" : ''}const response=await fetch('/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok||data.status!==200)throw new Error(data.error||'Unable to shorten this URL.');const shortUrl=new URL(data.short_url,location.origin).href;resultBox.innerHTML='<strong>Your short URL</strong><a href="'+shortUrl+'" target="_blank" rel="noopener">'+shortUrl+'</a>';resultBox.style.display='block';}catch(err){errorBox.textContent=err.message||'Something went wrong.';errorBox.style.display='block';}finally{button.disabled=false;button.textContent='Shorten URL';}});
+input.addEventListener('keydown',e=>{if(e.key==='Enter')button.click();});
+</script>
+</body></html>`;
       return new Response(html, { headers: { "content-type": "text/html;charset=UTF-8" } });
     }
   
