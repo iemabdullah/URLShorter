@@ -345,79 +345,219 @@ const config = {
       const captchaScript = captchaEnabled ? '<script src="https://captcha.gurl.eu.org/cap.min.js"></script>' : '';
       const captchaMarkup = captchaEnabled ? `<div class="captcha-wrap"><cap-widget id="cap" data-cap-api-endpoint="${config.captcha.api_endpoint}/"></cap-widget></div>` : '';
       const html = `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#6d5dfc">
-<title>URLShorter — Fast & Secure</title>${captchaScript}
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f7ff">
+<meta name="description" content="Fast, secure and reliable URL shortening by Abdullah Bin Shahid.">
+<title>URLShorter — Fast, Secure URL Shortening</title>${captchaScript}
 <style>
 *{box-sizing:border-box}
-:root{--p:#6d5dfc;--p2:#8b5cf6;--pink:#db2777;--ink:#111827;--muted:#73798a}
-html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--ink);background:radial-gradient(circle at 12% 20%,rgba(34,211,238,.28),transparent 28%),radial-gradient(circle at 88% 15%,rgba(139,92,246,.30),transparent 30%),radial-gradient(circle at 75% 85%,rgba(236,72,153,.20),transparent 32%),linear-gradient(135deg,#eef4ff,#faf7ff 48%,#eefcff)}
-body:before,body:after{content:"";position:fixed;border-radius:50%;pointer-events:none;filter:blur(2px)}
-body:before{width:280px;height:280px;left:-100px;bottom:-100px;background:rgba(109,93,252,.16);animation:float1 8s ease-in-out infinite}
-body:after{width:220px;height:220px;right:-70px;bottom:15%;background:rgba(34,211,238,.14);animation:float2 10s ease-in-out infinite}
-.scene{width:min(720px,calc(100% - 28px));perspective:1200px}
-.card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.8);border-radius:28px;background:rgba(255,255,255,.76);box-shadow:0 35px 80px rgba(43,36,91,.18),0 12px 30px rgba(72,82,120,.12),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);animation:cardIn .9s cubic-bezier(.2,.8,.2,1)}
-.card:before{content:"";position:absolute;inset:-50%;background:conic-gradient(from 90deg,transparent,#8b5cf622,transparent,#22d3ee22,transparent);animation:spin 12s linear infinite;pointer-events:none}
-.content{position:relative;z-index:2}
-.hero{text-align:center;padding:46px 28px 29px}
-.logo{width:62px;height:62px;margin:0 auto 17px;border-radius:19px;display:grid;place-items:center;color:#fff;font-size:29px;font-weight:900;background:linear-gradient(135deg,var(--p),var(--p2) 55%,var(--pink));box-shadow:0 14px 28px rgba(109,93,252,.32),inset 0 1px 0 rgba(255,255,255,.45);animation:logoFloat 3.5s ease-in-out infinite}
-h1{margin:0;font-size:clamp(31px,6vw,46px);line-height:1.08;letter-spacing:-1.7px;font-weight:850}
-.gradient{background:linear-gradient(90deg,#4f46e5,#7c3aed,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{margin:12px 0 0;color:var(--muted);font-size:16px}
-.badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px}
-.badge{padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(130,125,170,.14);color:#656b7c;font-size:11px;font-weight:700;box-shadow:0 6px 15px rgba(45,42,80,.06)}
-.form{padding:30px 34px 34px;border-top:1px solid rgba(125,130,160,.14)}
-label{display:block;text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;color:#7b8090;margin-bottom:11px}
-input[type=url]{width:100%;height:58px;border:1.5px solid #d7d9e4;border-radius:15px;background:rgba(248,249,253,.88);padding:0 17px;font-size:16px;color:#202538;outline:none;box-shadow:inset 0 2px 7px rgba(40,43,70,.035),0 5px 18px rgba(45,42,80,.04);transition:.25s ease}
-input[type=url]:focus{border-color:#8b7cf7;background:#fff;box-shadow:0 0 0 4px rgba(109,93,252,.11),0 9px 24px rgba(69,57,150,.10);transform:translateY(-1px)}
-button{position:relative;width:100%;height:56px;border:0;border-radius:15px;margin-top:14px;background:linear-gradient(110deg,#5b5cf0,#7c3aed 48%,#db2777);background-size:200% 100%;color:#fff;font-size:16px;font-weight:800;cursor:pointer;overflow:hidden;box-shadow:0 14px 28px rgba(99,75,220,.27),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s,box-shadow .2s,background-position .5s}
-button:before{content:"";position:absolute;top:-40%;left:-20%;width:35%;height:180%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);transform:rotate(18deg);animation:shine 2.8s infinite}
-button:hover{transform:translateY(-3px);box-shadow:0 19px 34px rgba(99,75,220,.34);background-position:100% 0}
-button:active{transform:translateY(-1px)}
-button:disabled{opacity:.7;cursor:not-allowed;transform:none}
-.captcha-wrap{margin-top:18px;display:flex;justify-content:center}
-.result,.error{display:none;margin-top:16px;border-radius:15px;animation:pop .35s ease}
-.result{padding:16px;background:linear-gradient(135deg,rgba(238,242,255,.95),rgba(236,253,250,.92));border:1px solid rgba(109,93,252,.12);word-break:break-all;box-shadow:0 10px 24px rgba(40,45,90,.06)}
-.result strong{display:block;margin-bottom:5px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#72778a}
-.result a{color:#5b4ee8;font-weight:750;text-decoration:none}
-.error{padding:13px 15px;background:#fff1f2;color:#be123c;font-size:14px;text-align:center;border:1px solid #fecdd3}
-.footer{position:relative;z-index:2;border-top:1px solid rgba(125,130,160,.14);text-align:center;padding:23px}
-.footer a{color:#6254e8;text-decoration:none;font-size:13px;font-weight:700}.footer a:hover{color:#db2777}
-.footer small{display:block;margin-top:7px;color:#9a9eaa;font-size:10px}
-@keyframes cardIn{from{opacity:0;transform:rotateX(8deg) translateY(35px) scale(.97)}to{opacity:1;transform:rotateX(0) translateY(0) scale(1)}}
-@keyframes logoFloat{0%,100%{transform:translateZ(35px) translateY(0) rotate(-2deg)}50%{transform:translateZ(35px) translateY(-8px) rotate(2deg)}}
-@keyframes shine{0%{left:-45%}55%,100%{left:125%}}
-@keyframes spin{to{transform:rotate(360deg)}}@keyframes pop{from{opacity:0;transform:translateY(7px) scale(.98)}to{opacity:1;transform:none}}
-@keyframes float1{50%{transform:translate(35px,-28px) scale(1.08)}}@keyframes float2{50%{transform:translate(-25px,-35px) scale(.9)}}
-@media(max-width:560px){.hero{padding:35px 20px 25px}.form{padding:25px 20px 26px}.card{border-radius:23px}.logo{width:55px;height:55px;border-radius:16px}h1{letter-spacing:-1.2px}.sub{font-size:14px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+html{scroll-behavior:smooth}
+:root{
+ --bg:#f6f7ff;--surface:rgba(255,255,255,.82);--surface2:#fff;--text:#151827;
+ --muted:#687087;--border:rgba(76,85,125,.13);--primary:#6d5dfc;--primary2:#8b5cf6;
+ --pink:#db2777;--blue:#2563eb;--green:#10b981;--shadow:0 24px 70px rgba(51,45,105,.12);
+}
+html[data-theme="dark"]{
+ --bg:#070b1a;--surface:rgba(13,18,40,.78);--surface2:#0d1228;--text:#f4f6ff;
+ --muted:#a6aec5;--border:rgba(175,184,230,.13);--shadow:0 28px 80px rgba(0,0,0,.4);
+}
+body{
+ margin:0;min-height:100vh;color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+ background:
+ radial-gradient(circle at 8% 5%,rgba(109,93,252,.18),transparent 25%),
+ radial-gradient(circle at 92% 12%,rgba(34,211,238,.14),transparent 24%),
+ radial-gradient(circle at 75% 90%,rgba(219,39,119,.10),transparent 28%),var(--bg);
+ overflow-x:hidden;transition:background .3s,color .3s;
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;background-image:radial-gradient(rgba(109,93,252,.2) 1px,transparent 1px);background-size:32px 32px;mask-image:linear-gradient(to bottom,#000,transparent 75%)}
+a{color:inherit}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+.site-header{
+ position:sticky;top:12px;z-index:50;margin:12px auto 0;width:min(1120px,calc(100% - 24px));
+ background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+ border-radius:20px;box-shadow:0 10px 35px rgba(30,35,70,.08);
+}
+.nav{min-height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;font-weight:900;font-size:21px;letter-spacing:-.5px}
+.brand-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--primary),var(--pink));box-shadow:0 9px 24px rgba(109,93,252,.28);font-size:21px}
+.brand b{color:var(--primary)}.nav-links{display:flex;gap:26px;align-items:center}
+.nav-links a{text-decoration:none;color:var(--muted);font-size:14px;font-weight:700}.nav-links a:hover{color:var(--primary)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.icon-btn,.github-btn{height:42px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);color:var(--text);cursor:pointer;font-weight:800}
+.icon-btn{width:42px;font-size:18px}.github-btn{padding:0 15px;text-decoration:none;display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,var(--primary),var(--pink));color:#fff;border:0}
+.hero{text-align:center;padding:82px 0 50px;position:relative}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:8px 13px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:800;color:var(--muted);box-shadow:0 8px 24px rgba(60,50,120,.06)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.hero h1{font-size:clamp(42px,7vw,78px);line-height:.98;letter-spacing:-3.5px;margin:22px auto 18px;max-width:850px}
+.gradient{background:linear-gradient(90deg,#4f46e5,#7c3aed,#db2777,#2563eb);background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradient 6s linear infinite}
+.hero p{max-width:690px;margin:auto;color:var(--muted);font-size:18px;line-height:1.65}
+.hero-badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:26px 0}
+.badge{padding:8px 13px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:12px;font-weight:800;box-shadow:0 7px 20px rgba(50,45,100,.05)}
+.shortener{
+ position:relative;overflow:hidden;padding:28px;border:1px solid var(--border);border-radius:25px;background:var(--surface);
+ backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:var(--shadow)
+}
+.shortener:before{content:"";position:absolute;width:280px;height:280px;right:-140px;top:-150px;background:rgba(109,93,252,.18);filter:blur(45px);border-radius:50%}
+.section-title{margin:0 0 6px;font-size:24px}.section-sub{margin:0 0 22px;color:var(--muted);font-size:14px}
+.input-row{display:grid;grid-template-columns:1fr 180px;gap:12px}
+.input-wrap{position:relative}
+.url-input{width:100%;height:58px;padding:0 17px;border-radius:15px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);outline:none;font-size:16px;transition:.25s}
+.url-input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(109,93,252,.12)}
+.primary-btn{height:58px;border:0;border-radius:15px;background:linear-gradient(110deg,#5b5cf0,#7c3aed 48%,#db2777);background-size:200%;color:#fff;font-size:15px;font-weight:850;cursor:pointer;box-shadow:0 14px 30px rgba(99,75,220,.24);transition:.22s}
+.primary-btn:hover{transform:translateY(-2px);background-position:100% 0;box-shadow:0 18px 35px rgba(99,75,220,.32)}
+.primary-btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.captcha-wrap{margin-top:17px;display:flex;justify-content:center}
+.result{
+ display:none;margin-top:18px;padding:18px;border:1px solid rgba(16,185,129,.25);border-radius:18px;
+ background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(109,93,252,.07));animation:pop .3s ease
+}
+.result-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.result-title{font-size:14px;font-weight:900}.success{color:var(--green)}
+.result-row{display:grid;grid-template-columns:1fr auto;gap:9px}
+.result-url{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:13px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);font-weight:750;color:var(--primary)}
+.copy-btn{border:0;border-radius:12px;padding:0 18px;background:var(--green);color:#fff;font-weight:850;cursor:pointer;min-width:92px}.copy-btn:hover{filter:brightness(.95)}
+.error{display:none;margin-top:14px;padding:12px 14px;border-radius:12px;background:rgba(244,63,94,.08);color:#e11d48;border:1px solid rgba(244,63,94,.18);font-size:13px;text-align:center}
+.trust{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;margin-top:18px;color:var(--muted);font-size:12px;font-weight:700}
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;padding:75px 0 30px}
+.feature{padding:24px;border:1px solid var(--border);border-radius:20px;background:var(--surface);box-shadow:0 12px 35px rgba(45,40,90,.06);transition:.25s}
+.feature:hover{transform:translateY(-6px);box-shadow:0 22px 45px rgba(45,40,90,.11)}
+.feature-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;font-size:21px;margin-bottom:16px;background:linear-gradient(135deg,var(--primary),var(--pink))}
+.feature:nth-child(2) .feature-icon{background:linear-gradient(135deg,#10b981,#06b6d4)}
+.feature:nth-child(3) .feature-icon{background:linear-gradient(135deg,#2563eb,#06b6d4)}
+.feature:nth-child(4) .feature-icon{background:linear-gradient(135deg,#f97316,#db2777)}
+.feature h3{margin:0 0 8px;font-size:16px}.feature p{margin:0;color:var(--muted);font-size:13px;line-height:1.65}
+.how{padding:70px 0}.center{text-align:center}.center p{color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:30px}
+.step{position:relative;text-align:center;padding:28px;border:1px solid var(--border);border-radius:22px;background:var(--surface)}
+.num{width:42px;height:42px;margin:0 auto 15px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--pink));box-shadow:0 9px 25px rgba(109,93,252,.25)}
+.step h3{margin:0 0 8px}.step p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
+.about{padding:35px 0 75px}.about-card{padding:32px;border-radius:24px;background:linear-gradient(135deg,rgba(109,93,252,.10),rgba(34,211,238,.08));border:1px solid var(--border);text-align:center}.about-card p{max-width:760px;margin:10px auto;color:var(--muted);line-height:1.7}
+.site-footer{border-top:1px solid var(--border);padding:55px 0 20px;background:rgba(0,0,0,.02)}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:35px}.footer-title{font-size:16px;font-weight:900;margin:0 0 14px}.footer-text,.footer-links a{color:var(--muted);font-size:13px;line-height:1.7}.footer-links{display:flex;flex-direction:column;gap:7px}.footer-links a{text-decoration:none}.footer-links a:hover{color:var(--primary)}
+.personal-link{display:inline-block;margin-top:12px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;color:var(--primary)!important;font-weight:800!important}
+.copyright{margin-top:42px;padding-top:18px;border-top:1px solid var(--border);text-align:center;color:var(--muted);font-size:12px}
+.top-btn{position:fixed;right:22px;bottom:22px;width:45px;height:45px;border:1px solid rgba(109,93,252,.4);border-radius:50%;background:var(--surface);color:var(--primary);font-size:18px;cursor:pointer;box-shadow:0 12px 30px rgba(50,45,100,.14);z-index:40}
+@keyframes gradient{0%{background-position:0}50%{background-position:100%}100%{background-position:0}}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+@media(max-width:850px){.nav-links{display:none}.features{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){
+ .container{width:min(100% - 22px,1120px)}.site-header{width:calc(100% - 14px);top:7px;margin-top:7px}.nav{min-height:62px;padding:0 11px}
+ .brand{font-size:18px}.brand-icon{width:37px;height:37px}.github-btn{display:none}.hero{padding:62px 0 35px}.hero h1{font-size:clamp(39px,13vw,58px);letter-spacing:-2.5px}.hero p{font-size:15px}
+ .shortener{padding:20px;border-radius:20px}.input-row{grid-template-columns:1fr}.primary-btn{width:100%}
+ .features,.steps{grid-template-columns:1fr}.features{padding-top:45px}.how{padding:50px 0}.about{padding-bottom:50px}
+ .footer-grid{grid-template-columns:1fr;gap:25px}.result-row{grid-template-columns:1fr}.copy-btn{height:48px}.result-url{white-space:normal;overflow-wrap:anywhere}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="scene"><main class="card"><div class="content">
+<header class="site-header">
+<nav class="nav">
+<a class="brand" href="#"><span class="brand-icon">↗</span><span>URL<b>Shorter</b></span></a>
+<div class="nav-links"><a href="#home">Home</a><a href="#features">Features</a><a href="#how">How It Works</a><a href="#about">About</a></div>
+<div class="nav-actions">
+<button class="icon-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle dark mode">☾</button>
+<a class="github-btn" href="https://github.com/iemabdullah/URLShorter" target="_blank" rel="noopener">GitHub ↗</a>
+</div>
+</nav>
+</header>
+
+<main id="home">
 <section class="hero">
-<div class="logo">↗</div>
-<h1><span class="gradient">Shorten</span> your URLs</h1>
-<p class="sub">Fast, secure & beautifully simple URL shortening</p>
-<div class="badges"><span class="badge">⚡ Fast</span><span class="badge">🔒 Secure</span><span class="badge">✨ Reliable</span></div>
+<div class="container">
+<div class="pill"><span class="dot"></span> Fast • Secure • Reliable URL Shortening</div>
+<h1>Shorten <span class="gradient">URLs</span><br>the smarter way.</h1>
+<p>Transform long, complicated links into short, clean and shareable URLs — with a beautiful, fast and secure experience.</p>
+<div class="hero-badges"><span class="badge">⚡ Lightning Fast</span><span class="badge">🔒 CAPTCHA Protected</span><span class="badge">✓ Reliable</span></div>
+</div>
 </section>
-<section class="form">
-<label for="url">Enter URL to shorten</label>
-<input id="url" type="url" placeholder="https://example.com/" autocomplete="url">
+
+<section class="container">
+<div class="shortener">
+<h2 class="section-title">Enter your long URL</h2>
+<p class="section-sub">Paste your link below and create a short URL in seconds.</p>
+<div class="input-row">
+<input class="url-input" id="url" type="url" placeholder="https://example.com/your-long-url" autocomplete="url">
+<button class="primary-btn" id="shorten">✦ Shorten URL</button>
+</div>
 ${captchaMarkup}
-<button id="shorten">Shorten URL</button>
-<div id="error" class="error"></div><div id="result" class="result"></div>
+<div id="error" class="error"></div>
+<div id="result" class="result">
+<div class="result-head"><div class="result-title"><span class="success">✓</span> Your short URL</div><span class="success" style="font-size:12px;font-weight:800">Ready to share</span></div>
+<div class="result-row"><div id="shortUrl" class="result-url"></div><button id="copyBtn" class="copy-btn">Copy</button></div>
+</div>
+<div class="trust"><span>🛡 Secure processing</span><span>⚡ Fast response</span><span>🔗 Easy to share</span></div>
+</div>
 </section>
-<footer class="footer"><a href="${sourceUrl}" target="_blank" rel="noopener noreferrer">View Source Code&nbsp; →</a><small>Powered by URLShorter</small></footer>
-</div></main></div>
+
+<section id="features" class="container features">
+<div class="feature"><div class="feature-icon">⚡</div><h3>Lightning Fast</h3><p>Create short links quickly with a lightweight Worker-powered service.</p></div>
+<div class="feature"><div class="feature-icon">🛡</div><h3>Secure & Safe</h3><p>CAPTCHA protection helps reduce unwanted automated link creation and access.</p></div>
+<div class="feature"><div class="feature-icon">📊</div><h3>Reliable</h3><p>Simple infrastructure designed for fast redirects and dependable sharing.</p></div>
+<div class="feature"><div class="feature-icon">∞</div><h3>Easy to Share</h3><p>Get a clean short URL that is easy to copy, remember and send anywhere.</p></div>
+</section>
+
+<section id="how" class="how">
+<div class="container">
+<div class="center"><h2>How It Works</h2><p>Three simple steps — that's it.</p></div>
+<div class="steps">
+<div class="step"><div class="num">1</div><h3>Paste URL</h3><p>Enter your long URL into the secure URL field above.</p></div>
+<div class="step"><div class="num">2</div><h3>Shorten</h3><p>Click “Shorten URL” and the Worker creates your short link.</p></div>
+<div class="step"><div class="num">3</div><h3>Copy & Share</h3><p>Copy your new short URL and share it anywhere you want.</p></div>
+</div>
+</div>
+</section>
+
+<section id="about" class="container about">
+<div class="about-card">
+<h2>Simple. Modern. Built for the web.</h2>
+<p>URLShorter is designed to make URL shortening quick and pleasant on desktop, tablet and mobile. The interface supports light mode by default and a polished dark mode whenever you prefer it.</p>
+</div>
+</section>
+</main>
+
+<footer class="site-footer">
+<div class="container">
+<div class="footer-grid">
+<div><div class="brand"><span class="brand-icon">↗</span><span>URL<b>Shorter</b></span></div><p class="footer-text">A fast, secure and reliable URL shortening service with a clean modern experience.</p></div>
+<div><h3 class="footer-title">Quick Links</h3><div class="footer-links"><a href="#home">Home</a><a href="#features">Features</a><a href="#how">How It Works</a><a href="#about">About</a></div></div>
+<div><h3 class="footer-title">Source</h3><div class="footer-links"><a href="https://github.com/iemabdullah/URLShorter" target="_blank" rel="noopener">View Source Code ↗</a><a href="https://github.com/iemabdullah/URLShorter" target="_blank" rel="noopener">GitHub Repository</a></div></div>
+<div><h3 class="footer-title">Created By</h3><div class="footer-links"><a href="http://abdullah.nyc.mn/" target="_blank" rel="noopener">Abdullah Bin Shahid</a><a class="personal-link" href="http://abdullah.nyc.mn/" target="_blank" rel="noopener">abdullah.nyc.mn ↗</a></div></div>
+</div>
+<div class="copyright">© ${new Date().getFullYear()} URLShorter by <strong>Abdullah Bin Shahid</strong> · All rights reserved.</div>
+</div>
+</footer>
+<button class="top-btn" id="topBtn" title="Back to top" aria-label="Back to top">↑</button>
+
 <script>
-const input=document.getElementById('url'),button=document.getElementById('shorten'),errorBox=document.getElementById('error'),resultBox=document.getElementById('result');let captchaToken=null;
+const input=document.getElementById('url'),button=document.getElementById('shorten'),errorBox=document.getElementById('error'),resultBox=document.getElementById('result'),shortUrlBox=document.getElementById('shortUrl'),copyBtn=document.getElementById('copyBtn'),themeToggle=document.getElementById('themeToggle'),topBtn=document.getElementById('topBtn');
+let captchaToken=null;
 ${captchaEnabled ? "const cap=document.getElementById('cap');cap.addEventListener('solve',e=>{captchaToken=e.detail.token;});" : ''}
-button.addEventListener('click',async()=>{errorBox.style.display='none';resultBox.style.display='none';const url=input.value.trim();if(!url){errorBox.textContent='Please enter a URL.';errorBox.style.display='block';return;}button.disabled=true;button.textContent='Creating your short link…';try{const payload={url};${captchaEnabled ? "if(!captchaToken)throw new Error('Please complete the CAPTCHA first.');payload.captcha_token=captchaToken;" : ''}const response=await fetch('/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok||data.status!==200)throw new Error(data.error||'Unable to shorten this URL.');const shortUrl=new URL(data.short_url,location.origin).href;resultBox.innerHTML='<strong>Your short URL</strong><a href="'+shortUrl+'" target="_blank" rel="noopener">'+shortUrl+'</a>';resultBox.style.display='block';}catch(err){errorBox.textContent=err.message||'Something went wrong.';errorBox.style.display='block';}finally{button.disabled=false;button.textContent='Shorten URL';}});
+const root=document.documentElement;
+const savedTheme=localStorage.getItem('urlshorter-theme');
+if(savedTheme==='dark'){root.setAttribute('data-theme','dark');themeToggle.textContent='☀';}else{root.setAttribute('data-theme','light');themeToggle.textContent='☾';}
+themeToggle.addEventListener('click',()=>{const dark=root.getAttribute('data-theme')==='dark';root.setAttribute('data-theme',dark?'light':'dark');themeToggle.textContent=dark?'☾':'☀';localStorage.setItem('urlshorter-theme',dark?'light':'dark');});
+window.addEventListener('scroll',()=>{topBtn.style.opacity=window.scrollY>450?'1':'0';topBtn.style.pointerEvents=window.scrollY>450?'auto':'none';});
+topBtn.style.opacity='0';topBtn.style.pointerEvents='none';topBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+copyBtn.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(shortUrlBox.textContent);copyBtn.textContent='Copied ✓';setTimeout(()=>copyBtn.textContent='Copy',1500);}catch(e){const t=document.createElement('textarea');t.value=shortUrlBox.textContent;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();copyBtn.textContent='Copied ✓';setTimeout(()=>copyBtn.textContent='Copy',1500);}});
+button.addEventListener('click',async()=>{
+ errorBox.style.display='none';resultBox.style.display='none';const url=input.value.trim();
+ if(!url){errorBox.textContent='Please enter a URL first.';errorBox.style.display='block';input.focus();return;}
+ button.disabled=true;button.textContent='Creating your short link…';
+ try{
+  const payload={url};
+  ${captchaEnabled ? "if(!captchaToken)throw new Error('Please complete the CAPTCHA first.');payload.captcha_token=captchaToken;" : ''}
+  const response=await fetch('/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const data=await response.json();
+  if(!response.ok||data.status!==200)throw new Error(data.error||'Unable to shorten this URL.');
+  const shortUrl=new URL(data.short_url,location.origin).href;
+  shortUrlBox.textContent=shortUrl;resultBox.style.display='block';resultBox.scrollIntoView({behavior:'smooth',block:'nearest'});
+ }catch(err){errorBox.textContent=err.message||'Something went wrong.';errorBox.style.display='block';}
+ finally{button.disabled=false;button.textContent='✦ Shorten URL';}
+});
 input.addEventListener('keydown',e=>{if(e.key==='Enter')button.click();});
 </script>
 </body></html>`;
